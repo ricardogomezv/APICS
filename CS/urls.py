@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,re_path
+from rest_framework_swagger.views import get_swagger_view
 from django.conf.urls import include
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
+
+schema_view = get_swagger_view(title='Pastebin API')
 
 # Serializers define the API representation.
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,9 +35,11 @@ class UserViewSet(viewsets.ModelViewSet):
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
 
+
 urlpatterns = [
      path('admin/', admin.site.urls),
      re_path(r'^',include(router.urls)),
      re_path(r'^api/v1/', include('Login.urls')),
-    
+     re_path(r'^api/v2/', include('Profile.urls')),
+     re_path(r'^api/swagger/', schema_view)
 ]
