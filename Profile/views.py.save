@@ -1,7 +1,12 @@
 #from django.shortcuts import render
+import coreapi
+from rest_framework.schemas import AutoSchema
 
 # Create your views here.
 from rest_framework.response import Response
+
+import coreapi                                                                                                         
+ from rest_framework.schemas import AutoSchema
 
 from django.shortcuts import get_object_or_404
 from django.http import Http404
@@ -10,9 +15,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-
-import coreapi
-from rest_framework.schemas import AutoSchema
 
 #importar modelo
 from Profile.models import Profile
@@ -35,7 +37,7 @@ class ListAutoShema(AutoSchema):
         extra_fields = []
         if method.lower() in ('post','get'):
             extra_fields = [
-                coreapi.Field('nombre'),
+                coreapi.Field ('nombre'),
                 coreapi.Field('apPaterno'),
                 coreapi.Field('apMaterno'),
                 coreapi.Field('edad',),
@@ -48,26 +50,6 @@ class ListAutoShema(AutoSchema):
         manual_fields =super().get_manual_fields(path,method)
         return manual_fields + extra_fields
 
-class ProfileList(APIView):
-    permission_classes = []
-
-    #Metodo get para solictar informacion
-    def get(self, request, format=None):
-        print("Metodo get filter")
-        queryset = Profile.objects.filter(delete = False)
-        #many = true si aplica si retorno multiples objetos
-        serializer = ProfileSerializers(queryset, many=True)
-        return Response(serializer.data)
-
-schema = ListAutoSchema()
-    def post(self,request,format=None):
-        serializer = ProfileSerializers(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            datas =  serializer.data
-            return Response(datas)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-
 class GeneroAutoSchema(AutoSchema):
     def get_manual_fields(self, path, method):
         extra_fields = []
@@ -78,6 +60,66 @@ class GeneroAutoSchema(AutoSchema):
         manual_fields =super().get_manual_fields(path,method)
         return manual_fields + extra_fields 
 
+class CiudadAutoSchema(AutoSchema):
+    def get_manual_fields(self, path, method):
+        extra_fields = []
+        if method.lower() in ('post','get'):
+            extra_fields = [
+                coreapi.Field('ciudad'),
+            ]
+        manual_fields =super().get_manual_fields(path,method)
+        return manual_fields + extra_fields 
+
+class EstadoAutoSchema(AutoSchema):
+    def get_manual_fields(self, path, method):
+        extra_fields = []
+        if method.lower() in ('post','get'):
+            extra_fields = [
+                coreapi.Field('estado'),
+            ]
+        manual_fields =super().get_manual_fields(path,method)
+        return manual_fields + extra_fields 
+
+class EstadoCivilAutoSchema(AutoSchema):
+    def get_manual_fields(self, path, method):
+        extra_fields = []
+        if method.lower() in ('post','get'):
+            extra_fields = [
+                coreapi.Field('estadocivil'),
+            ]
+        manual_fields =super().get_manual_fields(path,method)
+        return manual_fields + extra_fields 
+
+class OcupacionAutoSchema(AutoSchema):
+    def get_manual_fields(self, path, method):
+        extra_fields = []
+        if method.lower() in ('post','get'):
+            extra_fields = [
+                coreapi.Field('ocupacion'),
+            ]
+        manual_fields =super().get_manual_fields(path,method)
+        return manual_fields + extra_fields
+
+
+class ProfileList(APIView):
+    permission_classes = []
+    schema = ListAutoSchema()
+    #Metodo get para solictar informacion
+    def get(self, request, format=None):
+        print("Metodo get filter")
+        queryset = Profile.objects.filter(delete = False)
+        #many = true si aplica si retorno multiples objetos
+        serializer = ProfileSerializers(queryset, many=True)
+        return Response(serializer.data)
+
+     
+    def post(self,request,format=None):
+        serializer = ProfileSerializers(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            datas =  serializer.data
+            return Response(datas)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 class GeneroList(APIView):
     permission_classes = []
@@ -99,16 +141,6 @@ class GeneroList(APIView):
             return Response(datas)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-class OcupacionAutoSchema(AutoSchema):
-    def get_manual_fields(self, path, method):
-        extra_fields = []
-        if method.lower() in ('post','get'):
-            extra_fields = [
-                coreapi.Field('ocupacion'),
-            ]
-        manual_fields =super().get_manual_fields(path,method)
-        return manual_fields + extra_fields 
-
 class OcupacionList(APIView):
     permission_classes = []
     schema = OcupacionAutoSchema()
@@ -128,17 +160,6 @@ class OcupacionList(APIView):
             datas =  serializer.data
             return Response(datas)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-
-class EstadoAutoSchema(AutoSchema):
-    def get_manual_fields(self, path, method):
-        extra_fields = []
-        if method.lower() in ('post','get'):
-            extra_fields = [
-                coreapi.Field('estado'),
-            ]
-        manual_fields =super().get_manual_fields(path,method)
-        return manual_fields + extra_fields 
-
 
 class EstadoList(APIView):
     permission_classes = []
@@ -160,16 +181,6 @@ class EstadoList(APIView):
             return Response(datas)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-class CiudadAutoSchema(AutoSchema):
-    def get_manual_fields(self, path, method):
-        extra_fields = []
-        if method.lower() in ('post','get'):
-            extra_fields = [
-                coreapi.Field('ciudad'),
-            ]
-        manual_fields =super().get_manual_fields(path,method)
-        return manual_fields + extra_fields 
-
 class CiudadList(APIView):
     permission_classes = []
     schema = CiudadAutoSchema()
@@ -189,16 +200,6 @@ class CiudadList(APIView):
             datas =  serializer.data
             return Response(datas)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-
-class EstadoCivilAutoSchema(AutoSchema):
-    def get_manual_fields(self, path, method):
-        extra_fields = []
-        if method.lower() in ('post','get'):
-            extra_fields = [
-                coreapi.Field('estadoCivil'),
-            ]
-        manual_fields =super().get_manual_fields(path,method)
-        return manual_fields + extra_fields 
 
 class EstadoCivilList(APIView):
     permission_classes = []
