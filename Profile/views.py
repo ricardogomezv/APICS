@@ -50,6 +50,7 @@ class ListAutoShema(AutoSchema):
 
 class ProfileList(APIView):
     permission_classes = []
+    #schema = ListAutoSchema()
 
     #Metodo get para solictar informacion
     def get(self, request, format=None):
@@ -59,7 +60,6 @@ class ProfileList(APIView):
         serializer = ProfileSerializers(queryset, many=True)
         return Response(serializer.data)
 
-schema = ListAutoSchema()
     def post(self,request,format=None):
         serializer = ProfileSerializers(data = request.data)
         if serializer.is_valid():
